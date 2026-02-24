@@ -81,7 +81,7 @@ public class AppConsts {
     public static final String IPC_DEFAULT_USER = "jwifiApuser";
 
     public static final String LOCAL_IP = "192.168.10.231";
-    public static final int IPC_REMOTE_PORT = 28001;
+    public static final int IPC_REMOTE_PORT = 28000;
     public static final int JAE_ENCODER_ALAW = 1;
     public static final int JAE_ENCODER_G729 = 3;
     public static final int JAE_ENCODER_SAMR = 0;

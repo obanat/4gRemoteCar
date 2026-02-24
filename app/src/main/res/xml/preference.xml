@@ -21,7 +21,7 @@
             android:title="主控板端口号"
             android:inputType="number"
             android:dialogTitle="请输入主控板端口号"
-            android:defaultValue="28001"
+            android:defaultValue="28000"
             android:summary="设置主控板端口号，p2p模式无须设置"/>
 
         <ListPreference android:entries="@array/networkType_array"
@@ -36,7 +36,7 @@
             android:title="连接类型"
             android:key="netType"
             android:summary="@string/preference_nettype_summary"
-            android:defaultValue="tcp"
+            android:defaultValue="TCP"
             android:dialogTitle="选择连接类型"
             android:entryValues="@array/nettype_array"/>
     </PreferenceCategory>
