@@ -14,10 +14,11 @@ socat tcp-l:1000,fork,reuseaddr system:'ffmpeg -y -f v4l2 -i /dev/video0 -an -r 
 
 3.jjrc，需搭配jjrc的解码库使用，封装较好
 
-4.native播放，此方案是配合spy car专用，使用jnilib的方式填充surface，native的lib负责与遥控车交互
+4.native播放，此方案是配合happy cow小车专用，使用jnilib的方式填充surface，native的lib负责与遥控车交互
 本地的地址参考如下常量定义：
     public static final String LOCAL_IP = "192.168.10.231";
     public static final int IPC_DEFAULT_PORT = 9101;
 也支持远程p2p方式，地址和端口与mjpg方案一致
+备份\\share8t\06_一些折腾记录\202511-happycow小车改造
 
 
