@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="网络设置">
+        <EditTextPreference
+            android:key="clientId"
+            android:title="设备ID"
+            android:dialogTitle="请输入设备ID"
+            android:defaultValue="8001"
+            android:summary="设置主控板的硬件ID，必须唯一"/>
+
+        <EditTextPreference
+            android:key="serverIp"
+            android:title="主控板IP地址"
+            android:dialogTitle="请输入主控板IP地址"
+            android:defaultValue="192.168.10.1"
+            android:summary="设置主控板IP地址，p2p模式无须设置"/>
+
+        <EditTextPreference
+            android:key="serverPort"
+            android:title="主控板端口号"
+            android:inputType="number"
+            android:dialogTitle="请输入主控板端口号"
+            android:defaultValue="28001"
+            android:summary="设置主控板端口号，p2p模式无须设置"/>
+
+        <ListPreference android:entries="@array/networkType_array"
+            android:title="联网方式"
+            android:key="networkType"
+            android:summary="选择网络类型，local代表wifi，p2p代表远控"
+            android:defaultValue="local"
+            android:dialogTitle="请选择网络类型"
+            android:entryValues="@array/networkType_array"/>
+
+        <ListPreference android:entries="@array/nettype_array"
+            android:title="连接类型"
+            android:key="netType"
+            android:summary="@string/preference_nettype_summary"
+            android:defaultValue="tcp"
+            android:dialogTitle="选择连接类型"
+            android:entryValues="@array/nettype_array"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="连接类型">
+
+        <ListPreference android:entries="@array/mediaType_array"
+            android:title="视频方案"
+            android:key="mediaType"
+            android:summary="选择视频方案，默认是H264视频流"
+            android:defaultValue="h264"
+            android:dialogTitle="请选择视频方案"
+            android:entryValues="@array/mediaType_array"/>
+
+        <ListPreference android:entries="@array/controlType_array"
+            android:title="控制方式"
+            android:key="controlType"
+            android:summary="默认同时支持控制+媒体流控制"
+            android:defaultValue="3"
+            android:dialogTitle="请选择控制方式"
+            android:entryValues="@array/controlType_vals_array"/>
+    </PreferenceCategory>
+</PreferenceScreen>

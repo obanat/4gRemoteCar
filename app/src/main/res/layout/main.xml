@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.obana.remotecar.H264SurfaceView
+        android:id="@+id/h264View"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.obana.remotecar.mjpeg.MjpegView
+        android:id="@+id/jpegView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.obana.remotecar.JniView.JniView android:id="@+id/jniView" android:layout_width="match_parent" android:layout_height="match_parent"/>
+
+    <ImageView
+        android:id="@+id/recording_view"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center|top"
+        android:background="@android:color/transparent" />
+
+    <ImageButton
+        android:id="@+id/setting_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="40dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/button_setting" />
+
+    <ImageButton
+        android:id="@+id/record_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/video_record_stop" />
+
+    <com.obana.remotecar.VerticalSeekBar
+        android:id="@+id/verticalSeekBar"
+        android:layout_width="30dp"
+        android:layout_height="152dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="30dp"
+        android:max="100"
+        android:progress="50"
+        android:progressDrawable="@drawable/slider_track"
+        android:thumb="@drawable/slider_thumb" />
+</RelativeLayout>
