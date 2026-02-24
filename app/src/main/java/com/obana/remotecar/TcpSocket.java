@@ -49,7 +49,6 @@ public class TcpSocket {
 
     private static final String DEF_LOCAL_IP ="192.168.10.1";
     private static final int DEF_LOCAL_PORT =28000;
-    private static final int DEF_MJPEF_PORT =28080;
     private static final String DEF_REDIS_HOST= "i4free.x3322.net";
     private static final int DEF_REDIS_PORT = 38086;
     private DataInputStream mediaRecvStream;
@@ -65,8 +64,6 @@ public class TcpSocket {
     private String targetHost = DEF_LOCAL_IP;
     private int targetCmdPort = 0;
     private int targetMediaPort = 0;
-
-    private int mJpegPort = DEF_MJPEF_PORT;
     private Context context;
     boolean bMediaConnected = false;
     boolean bCmdConnected = false;
@@ -98,6 +95,13 @@ public class TcpSocket {
             targetCmdPort = DEF_P2P_PORT;
             targetMediaPort = targetCmdPort+1;
         }
+
+        String mode = getSharedPreference("mediaType", "h264");
+        if (!"h264".equals(mode)) {
+            AppLog.i(TAG, "no need to connect socket manually for no h264 mode" );
+            return SUCCESS;
+        }
+
         String strType = getSharedPreference(SP_KEY_CONTROL_TYPE, "3");
         int controlType = Integer.parseInt(strType);
         AppLog.i(TAG, "controlType:" + controlType);
@@ -155,7 +159,7 @@ public class TcpSocket {
     }
 
     public int getmJpegPort() {
-        return mJpegPort;
+        return targetMediaPort;
     }
     private void createCmdSocket(String host, int port) {
         try {

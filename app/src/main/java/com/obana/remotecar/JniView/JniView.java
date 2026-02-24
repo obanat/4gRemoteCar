@@ -124,7 +124,7 @@ public class JniView extends SurfaceView implements SurfaceHolder.Callback {
             port = AppConsts.IPC_DEFAULT_PORT;
         } else {
             ip = sock.getJpegMediaHost();
-            port = AppConsts.IPC_REMOTE_PORT;
+            port = sock.getmJpegPort();
         }
 
         mDevice = new Device(
