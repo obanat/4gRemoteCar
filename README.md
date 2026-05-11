@@ -21,4 +21,10 @@ socat tcp-l:1000,fork,reuseaddr system:'ffmpeg -y -f v4l2 -i /dev/video0 -an -r 
 也支持远程p2p方式，地址和端口与mjpg方案一致
 备份\\share8t\06_一些折腾记录\202511-happycow小车改造
 
+5.rtsp拉流方式播放
+
+6.h264裸流封装ws拉流
+
+7.大华/熊迈私有协议摄像头解码H264拉流
+
 
