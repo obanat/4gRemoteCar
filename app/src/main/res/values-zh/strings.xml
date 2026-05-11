@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_label">RevCar</string>
+    <string name="app_name">RevCar</string>
+
+    <!-- Preference titles & summaries -->
+    <string name="pref_category_network">网络设置</string>
+    <string name="pref_category_connection">连接类型</string>
+
+    <string name="pref_client_id_title">设备ID</string>
+    <string name="pref_client_id_dialog">请输入设备ID</string>
+    <string name="pref_client_id_summary">设置硬件ID，必须唯一</string>
+
+    <string name="pref_server_ip_title">主控板IP地址</string>
+    <string name="pref_server_ip_dialog">请输入主控板IP地址</string>
+    <string name="pref_server_ip_summary">设置主控板IP地址，p2p模式无须设置</string>
+
+    <string name="pref_server_port_title">主控板端口号</string>
+    <string name="pref_server_port_dialog">请输入主控板端口号</string>
+    <string name="pref_server_port_summary">设置主控板端口号，p2p模式无须设置</string>
+
+    <string name="pref_network_type_title">联网方式</string>
+    <string name="pref_network_type_summary">选择网络类型，local代表wifi，p2p代表远控</string>
+    <string name="pref_network_type_dialog">请选择网络类型</string>
+
+    <string name="pref_net_type_title">连接类型</string>
+    <string name="pref_net_type_summary">连接类型:TCP/UDP</string>
+    <string name="pref_net_type_dialog">选择连接类型</string>
+
+    <string name="pref_media_type_title">视频方案</string>
+    <string name="pref_media_type_summary">选择视频方案，默认是H264视频流</string>
+    <string name="pref_media_type_dialog">请选择视频方案</string>
+
+    <string name="pref_control_type_title">控制方式</string>
+    <string name="pref_control_type_summary">默认同时支持控制+媒体流控制</string>
+    <string name="pref_control_type_dialog">请选择控制方式</string>
+
+    <string name="pref_pagelink_network_title">网络设置</string>
+    <string name="pref_pagelink_network_summary">设置连接参数，例如IP地址</string>
+    <string name="preference_sectionheader_roviosettings">Rovio 设备设置</string>
+    <string name="preference_pagelink_camera_summary">设置分辨率等视频参数</string>
+
+    <!-- Media type display names -->
+    <string name="media_type_h264">H264裸流</string>
+    <string name="media_type_mjpg">MJPG压缩</string>
+    <string name="media_type_jni">JNI SDK</string>
+    <string name="media_type_jjrc">JJRC SDK</string>
+    <string name="media_type_ws">H264(WS)拉流</string>
+    <string name="media_type_dhip">H264大华/熊迈私有协议</string>
+    <string name="media_type_rtsp">H264(RTSP)拉流</string>
+
+    <!-- Network type display names -->
+    <string name="network_type_local">本地WIFI</string>
+    <string name="network_type_p2p">远程4/5G</string>
+
+    <!-- Control type display names -->
+    <string name="control_type_both">同时支持</string>
+    <string name="control_type_media">仅媒体流</string>
+    <string name="control_type_cmd">仅信令流</string>
+
+    <!-- Toast messages -->
+    <string name="toast_press_back_again">再按一次返回键退出</string>
+    <string name="toast_connect_failed">连接失败！</string>
+    <string name="toast_socket_connect_failed">Socket连接失败，5秒后重试…</string>
+    <string name="toast_car_connected">小车连接成功！</string>
+</resources>

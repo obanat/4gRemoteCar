@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -102,6 +104,7 @@ public class JoystickView extends View {
 
     private void initJoystickView() {
         setFocusable(true);
+        setFocusableInTouchMode(true);
         this.dbgPaint1 = new Paint(1);
         this.dbgPaint1.setColor(Color.rgb(0, 153, 204));
         this.dbgPaint1.setStrokeWidth(1.0f);
@@ -119,7 +122,7 @@ public class JoystickView extends View {
         this.handlePaint.setColor(-12303292);
         this.handlePaint.setStrokeWidth(1.0f);
         this.handlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        this.innerPadding = 10;
+        this.innerPadding = 4;
         setMovementRange(10.0f);
         setMoveResolution(1.0f);
         setClickThreshold(0.4f);
@@ -220,7 +223,7 @@ public class JoystickView extends View {
         this.cX = d / 2;
         this.cY = d / 2;
         this.bgRadius = (this.dimX / 2) - this.innerPadding;
-        this.handleRadius = (int) (d * 0.3d);
+        this.handleRadius = (int) (d * 0.2d);
         this.handleInnerBoundaries = this.handleRadius;
         this.movementRadius = Math.min(this.cX, this.cY) - this.handleInnerBoundaries;
     }
@@ -269,22 +272,42 @@ public class JoystickView extends View {
 
     @Override // android.view.View
     public boolean onGenericMotionEvent(MotionEvent event) {
-        Log.e("wificar", "onGenericMotionEvent:" + event);
-        int action = event.getAction();
-        switch (action & 255) {
-            case 2:
-                int pointerIndex = event.findPointerIndex(0);
-                float x = event.getX(pointerIndex);
-                this.touchX = this.movementRadius * x;
-                float y = event.getY(pointerIndex);
-                this.touchY = this.movementRadius * y;
-                reportOnMoved();
-                invalidate();
-                this.touchPressure = event.getPressure(pointerIndex);
-                reportOnPressure();
-                break;
+
+        if ((event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
+            // ��ӡҡ����ֵ��Ϣ
+            StringBuilder axisInfo = new StringBuilder();
+            // ������ҡ���᣺AXIS_X, AXIS_Y (��ҡ��), AXIS_Z, AXIS_RZ (��ҡ��), AXIS_LTRIGGER, AXIS_RTRIGGER
+            float axisX = event.getAxisValue(MotionEvent.AXIS_X);
+            float axisY = event.getAxisValue(MotionEvent.AXIS_Y);
+            float axisZ = event.getAxisValue(MotionEvent.AXIS_Z);
+            float axisRZ = event.getAxisValue(MotionEvent.AXIS_RZ);
+            float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
+            float hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+            if (Math.abs(axisX) > 0.01 || Math.abs(axisY) > 0.01 ||
+                Math.abs(axisZ) > 0.01 || Math.abs(axisRZ) > 0.01 ||
+                Math.abs(hatX) > 0.01 || Math.abs(hatY) > 0.01) {
+                Log.i(TAG, String.format("Joystick: AXIS_X=%.2f, AXIS_Y=%.2f, AXIS_Z=%.2f, AXIS_RZ=%.2f, HAT_X=%.2f, HAT_Y=%.2f",
+                        axisX, axisY, axisZ, axisRZ, hatX, hatY));
+            }
+
+            int action = event.getAction();
+            switch (action & 255) {
+                case 2: // ACTION_MOVE
+                    int pointerIndex = event.findPointerIndex(0);
+                    float x = event.getX(pointerIndex);
+                    this.touchX = this.movementRadius * x;
+                    float y = event.getY(pointerIndex);
+                    this.touchY = this.movementRadius * y;
+                    reportOnMoved();
+                    invalidate();
+                    this.touchPressure = event.getPressure(pointerIndex);
+                    reportOnPressure();
+                    break;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override // android.view.View
@@ -333,6 +356,21 @@ public class JoystickView extends View {
         return false;
     }
 
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // ֻ��ӡ�������룬�����޹���Ϣ
+        Log.i(TAG, "onKeyDown: keyCode=" + keyCode + ", " + KeyEvent.keyCodeToString(keyCode));
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        // ֻ��ӡ�������룬�����޹���Ϣ
+        Log.i(TAG, "onKeyUp: keyCode=" + keyCode + ", " + KeyEvent.keyCodeToString(keyCode));
+        return super.onKeyUp(keyCode, event);
+    }
+    
     private boolean processMoveEvent(MotionEvent ev) {
         if (this.pointerId != -1) {
             int pointerIndex = ev.findPointerIndex(this.pointerId);

@@ -4,15 +4,37 @@
         <item>TCP</item>
         <item>UDP</item>
     </string-array>
-    <string-array name="networkType_array">
+
+    <!-- Network type: entryValues (stored value) -->
+    <string-array name="networkType_values_array">
         <item>local</item>
         <item>p2p</item>
     </string-array>
-    <string-array name="mediaType_array">
+    <!-- Network type: entries (display) -->
+    <string-array name="networkType_array">
+        <item>@string/network_type_local</item>
+        <item>@string/network_type_p2p</item>
+    </string-array>
+
+    <!-- Media type: entryValues (stored value) -->
+    <string-array name="mediaType_values_array">
         <item>h264</item>
         <item>mjpg</item>
         <item>jni</item>
         <item>jjrc</item>
+        <item>ws</item>
+        <item>dhip</item>
+        <item>rtsp</item>
+    </string-array>
+    <!-- Media type: entries (display) -->
+    <string-array name="mediaType_array">
+        <item>@string/media_type_h264</item>
+        <item>@string/media_type_mjpg</item>
+        <item>@string/media_type_jni</item>
+        <item>@string/media_type_jjrc</item>
+        <item>@string/media_type_ws</item>
+        <item>@string/media_type_dhip</item>
+        <item>@string/media_type_rtsp</item>
     </string-array>
 
     <string-array name="controlType_vals_array">
@@ -20,10 +42,10 @@
         <item>2</item>
         <item>1</item>
     </string-array>
-
+    <!-- Control type: entries (display) -->
     <string-array name="controlType_array">
-        <item>both</item>
-        <item>media only</item>
-        <item>cmd only</item>
+        <item>@string/control_type_both</item>
+        <item>@string/control_type_media</item>
+        <item>@string/control_type_cmd</item>
     </string-array>
 </resources>

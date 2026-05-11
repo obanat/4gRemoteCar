@@ -1,28 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2015 The Android Open Source Project
-
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
-
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
     <string name="app_label">RevCar</string>
     <string name="app_name">RevCar</string>
 
-    <string name="preference_pagelink_network_title">网络设置</string>
-    <string name="preference_pagelink_network_summary">设置连接参数，例如IP地址</string>
-    <string name="preference_sectionheader_roviosettings">Rovio Device Settings</string>
-    <string name="preference_pagelink_camera_summary">设置分辨率等视频参数</string>
-    <string name="preference_nettype_title">选择连接类型</string>
-    <string name="preference_nettype_summary">连接类型:TCP/UDP</string>
+    <!-- Preference titles & summaries -->
+    <string name="pref_category_network">Network Settings</string>
+    <string name="pref_category_connection">Connection Type</string>
 
+    <string name="pref_client_id_title">Device ID</string>
+    <string name="pref_client_id_dialog">Enter Device ID</string>
+    <string name="pref_client_id_summary">Set the hardware ID of the controller, must be unique</string>
+
+    <string name="pref_server_ip_title">Controller IP Address</string>
+    <string name="pref_server_ip_dialog">Enter Controller IP Address</string>
+    <string name="pref_server_ip_summary">Set the controller IP address. Not needed in P2P mode</string>
+
+    <string name="pref_server_port_title">Controller Port</string>
+    <string name="pref_server_port_dialog">Enter Controller Port</string>
+    <string name="pref_server_port_summary">Set the controller port. Not needed in P2P mode</string>
+
+    <string name="pref_network_type_title">Network Mode</string>
+    <string name="pref_network_type_summary">Select network type. Local for Wi-Fi, P2P for remote</string>
+    <string name="pref_network_type_dialog">Select Network Type</string>
+
+    <string name="pref_net_type_title">Connection Type</string>
+    <string name="pref_net_type_summary">Connection type: TCP/UDP</string>
+    <string name="pref_net_type_dialog">Select Connection Type</string>
+
+    <string name="pref_media_type_title">Video Solution</string>
+    <string name="pref_media_type_summary">Select video solution, default is H264 stream</string>
+    <string name="pref_media_type_dialog">Select Video Solution</string>
+
+    <string name="pref_control_type_title">Control Mode</string>
+    <string name="pref_control_type_summary">Support both control and media stream by default</string>
+    <string name="pref_control_type_dialog">Select Control Mode</string>
+
+    <string name="pref_pagelink_network_title">Network Settings</string>
+    <string name="pref_pagelink_network_summary">Set connection parameters, e.g. IP address</string>
+    <string name="preference_sectionheader_roviosettings">Rovio Device Settings</string>
+    <string name="preference_pagelink_camera_summary">Set video parameters such as resolution</string>
+
+    <!-- Media type display names -->
+    <string name="media_type_h264">H264</string>
+    <string name="media_type_mjpg">MJPG</string>
+    <string name="media_type_jni">JNI</string>
+    <string name="media_type_jjrc">JJRC</string>
+    <string name="media_type_ws">WebSocket</string>
+    <string name="media_type_dhip">DHIP</string>
+    <string name="media_type_rtsp">RTSP</string>
+
+    <!-- Network type display names -->
+    <string name="network_type_local">Local (Wi-Fi)</string>
+    <string name="network_type_p2p">P2P (Remote)</string>
+
+    <!-- Control type display names -->
+    <string name="control_type_both">Both</string>
+    <string name="control_type_media">Media only</string>
+    <string name="control_type_cmd">Command only</string>
+
+    <!-- Toast messages -->
+    <string name="toast_press_back_again">Press back again to exit</string>
+    <string name="toast_connect_failed">Failed to connect!</string>
+    <string name="toast_socket_connect_failed">Socket Connect Failed, retry in 5s…</string>
+    <string name="toast_car_connected">Car Connected Successfully!</string>
 </resources>

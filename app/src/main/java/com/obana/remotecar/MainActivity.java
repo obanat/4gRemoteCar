@@ -31,10 +31,15 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import android.net.Uri;
+import android.provider.Settings;
+
 import com.obana.remotecar.JJRC.JjrcView;
 import com.obana.remotecar.JniView.JniView;
 import com.obana.remotecar.mjpeg.MjpegView;
 import com.obana.remotecar.utils.AppLog;
+import com.obana.remotecar.utils.Constant;
+import com.obana.remotecar.ws.WsSurfaceView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,12 +65,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public static final int MEDIA_MODE_MJPG = 11;
     public static final int MEDIA_MODE_JNI = 12;
     public static final int MEDIA_MODE_JJRC = 13;
+    public static final int MEDIA_MODE_WS = 14;
+    public static final int MEDIA_MODE_DHIP = 15;
+    public static final int MEDIA_MODE_RTSP = 16;
+    private static final int REQUEST_OVERLAY_PERMISSION = 2001;
+    private static final int BACK_PRESS_INTERVAL = 1500;
     private Handler handler = null;
     private H264SurfaceView mH264View;
     private MjpegView mJpegView;
     private JniView mJniView;
+    private DhipSurfaceView mDhipView;
 
     private JjrcView mJjrcView;
+    private WsSurfaceView mWsView;
+    private RtspSurfaceView mRtspView;
     private SurfaceHolder mPlaySurfaceHoler;
     private ImageButton mSetttingsBtn;
     private ImageButton mRecordVideoBtn;
@@ -79,6 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private VerticalSeekBar verticalSeekBar;
     WifiCarController controller = null;
     private int mMediaMode = MEDIA_MODE_H264;
+	private long backPressedTime = 0;
 
 
     protected void onCreate(Bundle paramBundle) {
@@ -106,6 +120,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mMediaMode = MEDIA_MODE_JNI;
         } else if ("h264".equals(mode)){
             mMediaMode = MEDIA_MODE_H264;
+        } else if ("ws".equals(mode)) {
+            mMediaMode = MEDIA_MODE_WS;
+        } else if ("dhip".equals(mode)) {
+            mMediaMode = MEDIA_MODE_DHIP;
+        } else if ("rtsp".equals(mode)) {
+            mMediaMode = MEDIA_MODE_RTSP;
         } else {
             mMediaMode = MEDIA_MODE_JJRC;
         }
@@ -114,6 +134,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mH264View = findViewById(R.id.h264View);
         mJpegView = findViewById(R.id.jpegView);
         mJniView = findViewById(R.id.jniView);
+        mDhipView = findViewById(R.id.dhipView);
+        mWsView = findViewById(R.id.wsView);
+        mRtspView = findViewById(R.id.rtspView);
+
+        // 根据媒体模式显示对应视图，隐藏其他视图
+        updateMediaViewVisibility();
 
         if (mMediaMode == MEDIA_MODE_JJRC) {
             mJjrcView = new JjrcView(this);
@@ -172,12 +198,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
     }
+
     public boolean onKeyDown(int paramInt, KeyEvent paramKeyEvent) {
         Log.i(TAG, "onKeyDown key=" + paramInt + " event=" + paramKeyEvent);
-        Toast.makeText(this, "k:" + paramInt + " k:" + paramKeyEvent.getKeyCode(), Toast.LENGTH_SHORT).show();
-        if (paramInt == 4) {
-            finish();
+        //Toast.makeText(this, "k:" + paramInt + " k:" + paramKeyEvent.getKeyCode(), Toast.LENGTH_SHORT).show();
+
+        // 处理返回键
+        if (paramInt == KeyEvent.KEYCODE_BACK) {
+            long currentTime = System.currentTimeMillis();
+            //Toast.makeText(this, String.valueOf(currentTime - backPressedTime), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "currentTime" + currentTime + " minil=" + (currentTime - backPressedTime));
+
+            if ((currentTime - backPressedTime) < BACK_PRESS_INTERVAL) {
+                // 两次按键间隔小于2秒，退出应用
+                cleanupAndExit();
+            } else {
+                // 第一次按键，提示用户
+                backPressedTime = currentTime;
+                Toast.makeText(this, R.string.toast_press_back_again, Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
+
         return super.onKeyDown(paramInt, paramKeyEvent);
     }
 
@@ -214,7 +256,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             int ret = mTcpSocket.connect();
             if (ret <= 0) {
-                sendToastMessage("Socket Connect Failed, retry in 5s ...");
+                sendToastMessage(getString(R.string.toast_socket_connect_failed));
 
                 AppLog.i(TAG, "--->connect to car failed, reconneting after 5s ....");
                 Message message = new Message();
@@ -234,6 +276,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mJniView.initUi();
                         mJniView.connect();
                         break;
+                    case MEDIA_MODE_WS:
+                        startWsStream();
+                        break;
+                    case MEDIA_MODE_DHIP:
+                        String cameraIp = getSharedPreference("serverIp", "192.168.10.10");
+                        if ("p2p".equalsIgnoreCase(getSharedPreference("networkType", ""))) {
+                            cameraIp = mTcpSocket.getIpv6HostName();
+                        }
+                        mDhipView.startPlayback(cameraIp);
+                        break;
+                    case MEDIA_MODE_RTSP:
+                        String rtspHost = getSharedPreference("serverIp", "192.168.1.1");
+                        if ("p2p".equalsIgnoreCase(getSharedPreference("networkType", ""))) {
+                            rtspHost = mTcpSocket.getIpv6HostName();
+                        }
+                        mRtspView.startPlayback(rtspHost);
+                        break;
                     default:
                         AppLog.e(TAG, "unknow media mode!");
                         break;
@@ -241,7 +300,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
 
                 AppLog.d(TAG, "---> connect to car Succuess!");
-                sendToastMessage("Car Connect Succuess!");
+                sendToastMessage(getString(R.string.toast_car_connected));
             }
         }
     };
@@ -277,16 +336,58 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     protected void onDestroy() {
         super.onDestroy();
-        AppLog.d(TAG, "on destory");
+        AppLog.d(TAG, "on destroy");
+
+        // 注意：这里不释放悬浮窗，因为悬浮窗需要在应用关闭后仍然显示
+        // 只有在双击退出应用时才释放悬浮窗
+
+        // 清理文件写入
+        stopWriteH264File();
     }
 
+    /**
+     * 清理并退出应用
+     */
+    private void cleanupAndExit() {
+        AppLog.d(TAG, "cleanupAndExit");
+
+        // 1. 停止并清理文件写入
+        stopWriteH264File();
+
+        // 2. 停止DHIP播放
+        if (mDhipView != null) {
+            mDhipView.stopPlayback();
+        }
+
+        // 3. 停止RTSP播放
+        if (mRtspView != null) {
+            mRtspView.stopPlayback();
+        }
+
+        // 4. 释放WakeLock
+        if (mWakeLock != null && mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+
+        // 5. 清理Handler消息
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+
+        // 6. 退出Activity
+        finish();
+
+        // 7. 退出进程
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
+    }
 
     public boolean handleMessageinUI(Message param1Message) {
         boolean handled = false;
         switch (param1Message.what) {
             case MESSAGE_CONNECT_TO_CAMERA_FAIL:
                 if (SHOW_DEBUG_MESSAGE)
-                    Toast.makeText(MainActivity.this, "failed to connect!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.toast_connect_failed, Toast.LENGTH_LONG).show();
                 handled = true;
                 break;
             case MESSAGE_MAKE_TOAST:
@@ -406,6 +507,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
+    /**
+     * 启动 WebSocket 模式的视频流
+     * 使用与 local/p2p 相同的服务器地址和 media 端口
+     */
+    private void startWsStream() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String host = sp.getString(Constant.SP_KEY_LOCAL_IP, Constant.DEF_LOCAL_IP);
+        int port = Constant.DEF_WS_PORT; 
+
+        String networkType = sp.getString(Constant.SP_KEY_NETWORK_TYPE, "local");
+        if ("p2p".equalsIgnoreCase(networkType)) {
+            host = mTcpSocket.getIpv6HostName();
+        }
+
+        String wsUrl;
+        if (host.contains(":")) {
+            wsUrl = "ws://[" + host + "]:" + port + "/ws";
+        } else {
+            wsUrl = "ws://" + host + ":" + port + "/ws";
+        }
+
+        AppLog.i(TAG, "WS mode, url=" + wsUrl);
+        mWsView.start(wsUrl);
+    }
+
     public TcpSocket getTcpSocket() {
         return mTcpSocket;
     }
@@ -414,6 +540,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //return AndRovio.getSharedPreference(key);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         return sp.getString(key, def);
+    }
+
+    /**
+     * 根据媒体模式显示/隐藏对应视图
+     */
+    private void updateMediaViewVisibility() {
+        if (mH264View != null) mH264View.setVisibility(mMediaMode == MEDIA_MODE_H264 ? View.VISIBLE : View.GONE);
+        if (mJpegView != null) mJpegView.setVisibility(mMediaMode == MEDIA_MODE_MJPG ? View.VISIBLE : View.GONE);
+        if (mJniView != null) mJniView.setVisibility(mMediaMode == MEDIA_MODE_JNI ? View.VISIBLE : View.GONE);
+        if (mWsView != null) mWsView.setVisibility(mMediaMode == MEDIA_MODE_WS ? View.VISIBLE : View.GONE);
+        if (mDhipView != null) mDhipView.setVisibility(mMediaMode == MEDIA_MODE_DHIP ? View.VISIBLE : View.GONE);
+        if (mRtspView != null) mRtspView.setVisibility(mMediaMode == MEDIA_MODE_RTSP ? View.VISIBLE : View.GONE);
     }
 
 }

@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
@@ -15,6 +17,7 @@ import android.view.SurfaceView;
 
 
 public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callback  {
+    private static final String TAG = "H264SurfaceView";
     static int mVideoHeight = 480;
     static int mVideoWidth = 640;
     public float ZOOM[] = {
@@ -52,19 +55,18 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", Video_WandH[0], Video_WandH[1]);
 
-        /*mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1);
-        mediaFormat.setInteger(MediaFormat.KEY_SAMPLE_RATE, 1);
-        mediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);*/
-
         try {
             mCodec = MediaCodec.createDecoderByType("video/avc");
             if (mSurface != null && mSurface.isValid()) {
                 mCodec.configure(mediaFormat, mSurface, null, 0);
                 mCodec.start();
                 mCodecState = 1;
+                Log.d(TAG, "MediaCodec started, surface valid");
+            } else {
+                Log.w(TAG, "initMediaCodec: surface is null or invalid");
             }
         } catch (Exception e) {
-            Log.e("CameraView", " MediaCodec == " + e.getMessage());
+            Log.e(TAG, " MediaCodec == " + e.getMessage());
             return;
         }
     }
@@ -101,15 +103,12 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void surfaceCreated(SurfaceHolder holder) {
 
     }
- 
-
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         mSurface = holder.getSurface();
         initMediaCodec();
     }
-
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -126,7 +125,6 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void takePicture()
     {
-        //AppCameraSurfaceFunction.getAppCameraSurfaceFunctionInstance().CameraTakePicture();
     }
 
     public int zoomIn()
@@ -134,7 +132,6 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
     {
         if(targetZoom >= 0 && targetZoom < 4)
         {
-            //AppDecodeH264.GlZoomIn();
             targetZoom = targetZoom + 1;
         }
         return targetZoom;
@@ -142,14 +139,12 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void zoomInit()
     {
-        //AppDecodeH264.GlZoomInit();
         targetZoom = 0;
     }
 
     public int zoomOut()throws InterruptedException{
         if(targetZoom > 0 && targetZoom <= 4)
         {
-            //AppDecodeH264.GlZoomOut();
             targetZoom = targetZoom - 1;
         }
         return targetZoom;
@@ -173,40 +168,56 @@ public class H264SurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
         return abyte0;
     }
-    
+
     public void decodeOneFrame(byte[] data, int length) {
-        if (mSurface != null && mSurface.isValid()) {
-            if (mCodec != null) {
-                try {
+        if (mSurface == null || !mSurface.isValid()) return;
+        if (mCodec == null || mCodecState <= 0) {
+            initMediaCodec();
+            if (mCodec == null || mCodecState <= 0) return;
+        }
 
-                    int inputBufferIndex = mCodec.dequeueInputBuffer(0);
-                    if (inputBufferIndex >= 0) {
-                        ByteBuffer inputBuffer = mCodec.getInputBuffer(inputBufferIndex);
-                        long timestamp = mFrameIndex++ * 1000000 / 30;
-                        inputBuffer.clear();
-                        inputBuffer.put(data, 0, length);
-                        mCodec.queueInputBuffer(inputBufferIndex, 0, length, timestamp, 0);
-                    }
-                    MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-                    int outputBufferIndex = mCodec.dequeueOutputBuffer(bufferInfo, 0);
-                    while (outputBufferIndex >= 0) {
-                        mCodec.releaseOutputBuffer(outputBufferIndex, true);
-                        outputBufferIndex = mCodec.dequeueOutputBuffer(bufferInfo, 0);
-                    }
-                } catch (Throwable t) {
-                    //Log.e(TAG, "offerDecoder233 == " + t.toString() + t.getMessage());
+        try {
+            int inputBufferIndex = mCodec.dequeueInputBuffer(0);
+            if (inputBufferIndex >= 0) {
+                ByteBuffer inputBuffer = mCodec.getInputBuffer(inputBufferIndex);
+                long timestamp = mFrameIndex++ * 1000000 / 30;
+                inputBuffer.clear();
+                inputBuffer.put(data, 0, length);
+                mCodec.queueInputBuffer(inputBufferIndex, 0, length, timestamp, 0);
+            }
 
-                    release();
+            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+            for (;;) {
+                int outputBufferIndex = mCodec.dequeueOutputBuffer(bufferInfo, 0);
+                if (outputBufferIndex >= 0) {
+                    mCodec.releaseOutputBuffer(outputBufferIndex, true);
+                } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    MediaFormat newFormat = mCodec.getOutputFormat();
+                    Log.d(TAG, "Output format changed: " + newFormat);
+                } else if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
+                    break;
+                } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                 }
-
-            } 
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "decodeOneFrame error: " + t.getMessage());
+            release();
         }
     }
+
     public void release() {
         if (mCodec != null) {
-            mCodec.release();
+            try {
+                mCodec.stop();
+            } catch (Exception e) {
+            }
+            try {
+                mCodec.release();
+            } catch (Exception e) {
+            }
             mCodec = null;
         }
+        mCodecState = -1;
     }
 
     public void stop() {

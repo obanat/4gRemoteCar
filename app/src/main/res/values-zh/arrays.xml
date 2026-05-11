@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chinese display arrays reference the same @string keys, which resolve to Chinese strings -->
+    <string-array name="networkType_array">
+        <item>@string/network_type_local</item>
+        <item>@string/network_type_p2p</item>
+    </string-array>
+    <string-array name="mediaType_array">
+        <item>@string/media_type_h264</item>
+        <item>@string/media_type_mjpg</item>
+        <item>@string/media_type_jni</item>
+        <item>@string/media_type_jjrc</item>
+        <item>@string/media_type_ws</item>
+        <item>@string/media_type_dhip</item>
+        <item>@string/media_type_rtsp</item>
+    </string-array>
+    <string-array name="controlType_array">
+        <item>@string/control_type_both</item>
+        <item>@string/control_type_media</item>
+        <item>@string/control_type_cmd</item>
+    </string-array>
+</resources>

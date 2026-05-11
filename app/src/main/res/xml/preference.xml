@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="网络设置">
+    <PreferenceCategory android:title="@string/pref_category_network">
         <EditTextPreference
             android:key="clientId"
-            android:title="设备ID"
-            android:dialogTitle="请输入设备ID"
+            android:title="@string/pref_client_id_title"
+            android:dialogTitle="@string/pref_client_id_dialog"
             android:defaultValue="8001"
-            android:summary="设置主控板的硬件ID，必须唯一"/>
+            android:summary="@string/pref_client_id_summary"/>
 
         <EditTextPreference
             android:key="serverIp"
-            android:title="主控板IP地址"
-            android:dialogTitle="请输入主控板IP地址"
+            android:title="@string/pref_server_ip_title"
+            android:dialogTitle="@string/pref_server_ip_dialog"
             android:defaultValue="192.168.10.1"
-            android:summary="设置主控板IP地址，p2p模式无须设置"/>
+            android:summary="@string/pref_server_ip_summary"/>
 
         <EditTextPreference
             android:key="serverPort"
-            android:title="主控板端口号"
+            android:title="@string/pref_server_port_title"
             android:inputType="number"
-            android:dialogTitle="请输入主控板端口号"
+            android:dialogTitle="@string/pref_server_port_dialog"
             android:defaultValue="28000"
-            android:summary="设置主控板端口号，p2p模式无须设置"/>
+            android:summary="@string/pref_server_port_summary"/>
 
         <ListPreference android:entries="@array/networkType_array"
-            android:title="联网方式"
+            android:title="@string/pref_network_type_title"
             android:key="networkType"
-            android:summary="选择网络类型，local代表wifi，p2p代表远控"
+            android:summary="@string/pref_network_type_summary"
             android:defaultValue="local"
-            android:dialogTitle="请选择网络类型"
-            android:entryValues="@array/networkType_array"/>
+            android:dialogTitle="@string/pref_network_type_dialog"
+            android:entryValues="@array/networkType_values_array"/>
 
         <ListPreference android:entries="@array/nettype_array"
-            android:title="连接类型"
+            android:title="@string/pref_net_type_title"
             android:key="netType"
-            android:summary="@string/preference_nettype_summary"
+            android:summary="@string/pref_net_type_summary"
             android:defaultValue="TCP"
-            android:dialogTitle="选择连接类型"
+            android:dialogTitle="@string/pref_net_type_dialog"
             android:entryValues="@array/nettype_array"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="连接类型">
+    <PreferenceCategory android:title="@string/pref_category_connection">
 
         <ListPreference android:entries="@array/mediaType_array"
-            android:title="视频方案"
+            android:title="@string/pref_media_type_title"
             android:key="mediaType"
-            android:summary="选择视频方案，默认是H264视频流"
+            android:summary="@string/pref_media_type_summary"
             android:defaultValue="h264"
-            android:dialogTitle="请选择视频方案"
-            android:entryValues="@array/mediaType_array"/>
+            android:dialogTitle="@string/pref_media_type_dialog"
+            android:entryValues="@array/mediaType_values_array"/>
 
         <ListPreference android:entries="@array/controlType_array"
-            android:title="控制方式"
+            android:title="@string/pref_control_type_title"
             android:key="controlType"
-            android:summary="默认同时支持控制+媒体流控制"
+            android:summary="@string/pref_control_type_summary"
             android:defaultValue="3"
-            android:dialogTitle="请选择控制方式"
+            android:dialogTitle="@string/pref_control_type_dialog"
             android:entryValues="@array/controlType_vals_array"/>
     </PreferenceCategory>
 </PreferenceScreen>

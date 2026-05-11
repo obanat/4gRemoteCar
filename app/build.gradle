@@ -9,9 +9,10 @@ android {
     defaultConfig {
         applicationId "com.obana.remotecar"
         minSdk 21
-        targetSdk 32
-        versionCode 1
-        versionName "1.0.0"
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 30
+        versionCode 102
+        versionName "1.0.3"
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
@@ -35,5 +36,9 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.preference
+    implementation libs.media3.exoplayer
+    implementation libs.media3.exoplayer.rtsp
+    implementation libs.media3.ui
+    implementation libs.okhttp
 
 }

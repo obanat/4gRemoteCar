@@ -15,6 +15,19 @@
 
     <com.obana.remotecar.JniView.JniView android:id="@+id/jniView" android:layout_width="match_parent" android:layout_height="match_parent"/>
 
+    <com.obana.remotecar.DhipSurfaceView
+        android:id="@+id/dhipView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.obana.remotecar.ws.WsSurfaceView
+        android:id="@+id/wsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.obana.remotecar.RtspSurfaceView
+        android:id="@+id/rtspView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <ImageView
         android:id="@+id/recording_view"
         android:layout_width="32dp"

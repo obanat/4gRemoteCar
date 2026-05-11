@@ -35,22 +35,13 @@ public class TcpSocket {
 
     private static final int DEF_P2P_PORT = 28000;
 
-    private static final String SP_KEY_MAC= "clientId";
-    private static final String SP_KEY_LOCAL_IP= "serverIp";
-    private static final String SP_KEY_LOCAL_PORT= "serverPort";
-    private static final String SP_KEY_NETWORK_TYPE= "networkType";
-    private static final String SP_KEY_NET_TYPE= "netType";
 
-    private static final String SP_KEY_CONTROL_TYPE= "controlType";
     private static final int CONTROL_TYPE_NONE = 0;
     private static final int CONTROL_TYPE_MEDIA = 2;
     private static final int CONTROL_TYPE_CMD = 1;
     private static final int CONTROL_TYPE_BOTH = 3;
 
-    private static final String DEF_LOCAL_IP ="192.168.10.1";
-    private static final int DEF_LOCAL_PORT =28000;
-    private static final String DEF_REDIS_HOST= "i4free.x3322.net";
-    private static final int DEF_REDIS_PORT = 38086;
+
     private DataInputStream mediaRecvStream;
     private DataInputStream cmdRecvStream;
     private Socket mediaSocket;//tcp socket
@@ -61,7 +52,7 @@ public class TcpSocket {
     private Thread mediaRecvThread;
     private Thread cmdRecvThread;
 
-    private String targetHost = DEF_LOCAL_IP;
+    private String targetHost =Constant.DEF_LOCAL_IP;
     private int targetCmdPort = 0;
     private int targetMediaPort = 0;
     private Context context;
@@ -83,28 +74,26 @@ public class TcpSocket {
         }
 
         //use local host & port
-        targetHost = getSharedPreference(SP_KEY_LOCAL_IP, DEF_LOCAL_IP);
-        String strPort = getSharedPreference(SP_KEY_LOCAL_PORT, Integer.toString(DEF_LOCAL_PORT));
+        targetHost = getSharedPreference(Constant.SP_KEY_LOCAL_IP, Constant.DEF_LOCAL_IP);
+        String strPort = getSharedPreference(Constant.SP_KEY_LOCAL_PORT, Integer.toString(Constant.DEF_LOCAL_PORT));
         int intPort = Integer.parseInt(strPort);
-        targetCmdPort = intPort > 0 ? intPort : DEF_LOCAL_PORT;
+        targetCmdPort = intPort > 0 ? intPort : Constant.DEF_LOCAL_PORT;
         targetMediaPort = targetCmdPort+1;
-        boolean isTcp = "0".equals(getSharedPreference(SP_KEY_NET_TYPE, "0"));
+        boolean isTcp = "TCP".equals(getSharedPreference(Constant.SP_KEY_NET_TYPE, "TCP"));
 
-        if ("p2p".equalsIgnoreCase(getSharedPreference(SP_KEY_NETWORK_TYPE, ""))){
+        if ("p2p".equalsIgnoreCase(getSharedPreference(Constant.SP_KEY_NETWORK_TYPE, ""))){
             targetHost = getIpv6HostName();
-            targetCmdPort = DEF_P2P_PORT;
-            targetMediaPort = targetCmdPort+1;
+            //targetCmdPort = DEF_P2P_PORT;
+            //targetMediaPort = targetCmdPort+1;
         }
 
         String mode = getSharedPreference("mediaType", "h264");
-        if (!"h264".equals(mode)) {
-            AppLog.i(TAG, "no need to connect socket manually for no h264 mode" );
-            return SUCCESS;
-        }
-
-        String strType = getSharedPreference(SP_KEY_CONTROL_TYPE, "3");
+        // 所有模式下都需连接cmd socket用于控制
+        boolean isH264Mode = "h264".equals(mode);
+        
+        String strType = getSharedPreference(Constant.SP_KEY_CONTROL_TYPE, "3");
         int controlType = Integer.parseInt(strType);
-        AppLog.i(TAG, "controlType:" + controlType);
+        AppLog.i(TAG, "read play mode:" + mode + " & controlType:" + controlType);
 
         if (controlType == CONTROL_TYPE_BOTH || controlType == CONTROL_TYPE_CMD) {
             if (bCmdConnected) {
@@ -120,6 +109,12 @@ public class TcpSocket {
         }
 
         /// ================================================////
+
+        // 仅h264 模式自行管理 media 连接，其他模式不需要创建 media socket
+        if (!isH264Mode) {
+            AppLog.i(TAG, "not H264 mode, skip media socket creation");
+            return SUCCESS;
+        }
 
         if (controlType == CONTROL_TYPE_BOTH || controlType == CONTROL_TYPE_MEDIA) {
             if (bMediaConnected) {
@@ -150,7 +145,7 @@ public class TcpSocket {
     }
 
     public String getJpegMediaHost() {
-        if ("p2p".equalsIgnoreCase(getSharedPreference(SP_KEY_NETWORK_TYPE, ""))) {
+        if ("p2p".equalsIgnoreCase(getSharedPreference(Constant.SP_KEY_NETWORK_TYPE, ""))) {
             String url = String.format("[%s]", targetHost);
             return url;
         } else {
@@ -208,9 +203,9 @@ public class TcpSocket {
 
     public String getIpv6HostName() {
         String url ;
-        String clientId = getSharedPreference(SP_KEY_MAC, "mavic");
+        String clientId = getSharedPreference(Constant.SP_KEY_MAC, "mavic");
 
-        url = String.format("http://%s:%d/wificar/getClientIp?mac=%s", DEF_REDIS_HOST, DEF_REDIS_PORT,clientId);
+        url = String.format("http://%s:%d/wificar/getClientIp?mac=%s", Constant.DEF_REDIS_HOST, Constant.DEF_REDIS_PORT,clientId);
         AppLog.i(TAG, "wificar server url:" + url);
         String ipaddr = getURLContent(url);
         AppLog.i(TAG, "ip v6 addr:" + ipaddr);
